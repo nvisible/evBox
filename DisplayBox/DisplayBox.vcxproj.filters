@@ -17,5 +17,9 @@
   <ItemGroup>
     <None Include="DisplayBox.ino" />
   </ItemGroup>
- 
+  <ItemGroup>
+    <ClInclude Include="__vm\.DisplayBox.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
