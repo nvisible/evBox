@@ -1,11 +1,11 @@
-/* GIMP RGB C-Source image dump (powerbutton.c) */
+/* GIMP RGB C-Source image dump (powerbuttongfx.c) */
 
 static const struct {
   unsigned int 	 width;
   unsigned int 	 height;
   unsigned int 	 bytes_per_pixel; /* 2:RGB16, 3:RGB, 4:RGBA */ 
   unsigned char	 pixel_data[64 * 32 * 3 + 1];
-} powerbutton = {
+} powerbuttongfx = {
   64, 32, 3,
   "\2\2\2\1\2\1\1\2\1\0\2\1\0\3\2\0\2\1\0\2\1\1\3\2\0\3\2\1\2\2\1\1\1\1\2\2"
   "\0\2\1\0\2\1\0\3\2\2\3\3\2\3\6\2\3\11\3\4\10\2\3\4\2\3\5\2\3\10\3\4\11\2"

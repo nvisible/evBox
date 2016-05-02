@@ -84,7 +84,7 @@
     <ClInclude Include="__vm\.DisplayBox.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="powerbutton.c" />
+    <ClCompile Include="powerbuttongfx.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
