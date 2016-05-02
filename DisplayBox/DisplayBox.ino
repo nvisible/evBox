@@ -9,8 +9,6 @@
 Its uses a Teensy 3.2 microcontroller from PJRC and a SmartMatrix SD Shield from PixelMatix
 Initial plan is to implement inputs for Voltage, Amperage, and Speed display*/
 
-#include <Arduino.h>
-
 // SPI library needed for SD card and for intercommunication between boxes.
 #include <SPI.h>
 
