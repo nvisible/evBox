@@ -16,9 +16,9 @@
 #define __MK20DX256__
 #define TEENSYDUINO 128
 #define ARDUINO 10608
-#define F_CPU 96000000
-#define USB_DISABLED
-#define LAYOUT_US_ENGLISH
+#define F_CPU {build.fcpu}
+#define {build.usbtype}
+#define LAYOUT_{build.keylayout}
 #define __cplusplus 201103L
 #define __arm__
 #define __ARM__
