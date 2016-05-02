@@ -15,19 +15,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="DisplayBox.ino" />
+    <None Include="TestBox.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="__vm\.DisplayBox.vsarduino.h">
+    <ClInclude Include="__vm\.TestBox.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gimpbitmap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="powerbutton.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

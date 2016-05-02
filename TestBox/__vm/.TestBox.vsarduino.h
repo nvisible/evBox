@@ -17,7 +17,7 @@
 #define TEENSYDUINO 128
 #define ARDUINO 10608
 #define F_CPU 96000000
-#define USB_DISABLED
+#define USB_SERIAL
 #define LAYOUT_US_ENGLISH
 #define __cplusplus 201103L
 #define __arm__
@@ -56,7 +56,5 @@ typedef void *__builtin_va_list;
 //#define noInterrupts() __disable_irq()
 
 #define NEW_H
-#include <DisplayBox.ino>
-#include <gimpbitmap.h>
-#include <powerbutton.c>
+#include <TestBox.ino>
 #endif
