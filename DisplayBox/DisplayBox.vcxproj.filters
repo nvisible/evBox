@@ -26,7 +26,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="powerbuttongfx.c">
+    <ClCompile Include="powerbutton.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

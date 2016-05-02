@@ -58,5 +58,5 @@ typedef void *__builtin_va_list;
 #define NEW_H
 #include <DisplayBox.ino>
 #include <gimpbitmap.h>
-#include <powerbuttongfx.c>
+#include <powerbutton.c>
 #endif
