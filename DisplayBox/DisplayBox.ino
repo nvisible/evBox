@@ -32,7 +32,6 @@ const uint8_t kPanelType = SMARTMATRIX_HUB75_32ROW_MOD16SCAN;   // use SMARTMATR
 // Need to investigate options. Docs not up to date yet. May have to dig around source code
 const uint8_t kMatrixOptions = (SMARTMATRIX_OPTIONS_NONE);      // see http://docs.pixelmatix.com/SmartMatrix for options
 const uint8_t kBackgroundLayerOptions = (SM_BACKGROUND_OPTIONS_NONE);
-const uint8_t kScrollingLayerOptions = (SM_SCROLLING_OPTIONS_NONE);
 const uint8_t kIndexedLayerOptions = (SM_INDEXED_OPTIONS_NONE);
 
 // There is a draw buffer and display buffer. The next section allocates memory to those buffers
@@ -45,6 +44,10 @@ SMARTMATRIX_ALLOCATE_BACKGROUND_LAYER(defaultBackgroundLayer, kMatrixWidth, kMat
 
 // Initial indexed layer. 
 SMARTMATRIX_ALLOCATE_INDEXED_LAYER(indexedLayer, kMatrixWidth, kMatrixHeight, COLOR_DEPTH, kIndexedLayerOptions);
+
+// variable to keep track of current layer
+// Would like to pass the class name as a variable to the drawBitmap() function
+byte selectedLayer = 0; // 0 is default background
 
 
 
@@ -100,10 +103,10 @@ void drawDefaultBackground() {
 	// without having to recompile, maybe. It may need to be compiled first.
 
 	// Clear background layer
-	defaultBackgroundLayer.fillScreen(black);
+	// defaultBackgroundLayer.fillScreen(black);
 
-	// Draw the blue powerbutton graphic
-	drawBitmap(0, 0, (const gimp64x32bitmap*)&powerbutton);
+	// Draw the blue powerbutton graphic (need to add option to choose displaybuffer)
+	drawBitmap(0, 0, 0, (const gimp64x32bitmap*)&powerbutton);
 
 
 }
@@ -112,15 +115,22 @@ void drawDefaultBackground() {
 // This function was taken from the SmartMatrix FeatureDemo.ino.
 // It reads the RGB bitmap data stored in gimp64x32bitmap and draws a pixel of the same color
 // to the given displaybuffer.
-void drawBitmap(int16_t x, int16_t y, const gimp64x32bitmap* bitmap) {
+void drawBitmap(int16_t x, int16_t y, char selectedLayer, const gimp64x32bitmap* bitmap) {
 	for (unsigned int i = 0; i < bitmap->height; i++) {
 		for (unsigned int j = 0; j < bitmap->width; j++) {
 			rgb24 pixel = { bitmap->pixel_data[(i*bitmap->width + j) * 3 + 0],
 				bitmap->pixel_data[(i*bitmap->width + j) * 3 + 1],
 				bitmap->pixel_data[(i*bitmap->width + j) * 3 + 2] };
 
-			// Currently only draws to default background layer. Find a way to add different layers. Maybe call another function?
-			defaultBackgroundLayer.drawPixel(x + j, y + i, pixel);
+			if (selectedLayer == 1) {
+				//2nd, 3rd, 4th...etc background buffer
+
+			}
+			else {
+				// Pick the default buffer
+				defaultBackgroundLayer.drawPixel(x + j, y + i, pixel);
+			}
+
 		}
 	}
 }
