@@ -57,6 +57,9 @@ typedef void *__builtin_va_list;
 
 #define NEW_H
 #include <DisplayBox.ino>
+#include <batteryModeBackground.c>
 #include <gimpbitmap.h>
-#include <powerbutton.c>
+#include <powerModeBackground.c>
+#include <speedModeBackground.c>
+#include <standbyModeBackground.c>
 #endif

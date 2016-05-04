@@ -26,7 +26,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="powerbutton.c">
+    <ClCompile Include="batteryModeBackground.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="powerModeBackground.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="speedModeBackground.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="standbyModeBackground.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
