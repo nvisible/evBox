@@ -84,7 +84,10 @@
     <ClInclude Include="__vm\.DisplayBox.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="powerbutton.c" />
+    <ClCompile Include="batteryModeBackground.c" />
+    <ClCompile Include="standbyModeBackground.c" />
+    <ClCompile Include="powerModeBackground.c" />
+    <ClCompile Include="speedModeBackground.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
