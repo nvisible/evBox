@@ -19,7 +19,10 @@ Initial plan is to implement inputs for Voltage, Amperage, and Speed display*/
 #include "gimpbitmap.h"
 
 // Includes for all bitmaps. May move to separate file for optional builds
-#include "powerbutton.c"	// Blue power button. Matches existing physical switch. Make a breathing effect while it's waiting.
+#include "standbyModeBackground.c"	// Interlock is "ON" but vehicle not "started". (Currently: Matches existing physical switch. TODO: Make a breathing effect while it's waiting.)
+#include "speedModeBackground.c"	// Speed mode background
+#include "batteryModeBackground.c"	// Batter mode background
+#include "powerModeBackground.c"	// Power Mode background
 
 #define COLOR_DEPTH 24                  // known working: 24, 48 - If the sketch uses type `rgb24` directly, COLOR_DEPTH must be 24
 // Current DisplayBox dimensions is 64x32
@@ -34,7 +37,7 @@ const uint8_t kMatrixOptions = (SMARTMATRIX_OPTIONS_NONE);      // see http://do
 const uint8_t kBackgroundLayerOptions = (SM_BACKGROUND_OPTIONS_NONE);
 const uint8_t kIndexedLayerOptions = (SM_INDEXED_OPTIONS_NONE);
 
-// There is a draw buffer and display buffer. The next section allocates memory to those buffers
+/*There is a draw buffer and display buffer. The next section allocates memory to those buffers */
 
 // Default display buffer named: displayBox
 SMARTMATRIX_ALLOCATE_BUFFERS(displayBox, kMatrixWidth, kMatrixHeight, kRefreshDepth, kDmaBufferRows, kPanelType, kMatrixOptions);
@@ -45,13 +48,31 @@ SMARTMATRIX_ALLOCATE_BACKGROUND_LAYER(defaultBackgroundLayer, kMatrixWidth, kMat
 // Initial indexed layer. 
 SMARTMATRIX_ALLOCATE_INDEXED_LAYER(indexedLayer, kMatrixWidth, kMatrixHeight, COLOR_DEPTH, kIndexedLayerOptions);
 
+/*
+*	The DisplyBox will have three modes: Speed, Battery, and Power with a focus on current speed, battery 
+*	level, and torque/hp/power output respectively. Each mode will change it's background and display it's
+*	info in the Main section (center) while the remaining modes will display basic data in Aux1 (left) or
+*	Aux2 (right). 
+*	
+*	TODO: Include option to expand the Aux sections with the current mode. (example: speedMode displays MPH
+*	There shall be a set of inputs to allow switching between modes. 
+*	The BrainBox will allow the performance of the connected vehicle to change based on each mode. 
+*/
+
+/*TODO: This next part is important to figuring out a protocol. I would like to pass the mode
+as a string in the so it will always be human readable. Maybe, maybe not.*/
+byte currentDisplayMode;	// Sets the current mode of the display (speedMode, batteryMode, powerMode)
+const byte speedMode = 0;			// 0 is also the default mode
+const byte batteryMode = 1;
+const byte powerMode = 2;
+const byte standbyMode = 255;	// Setting standbyMode to the end. Will change to default after physical pin is configured
+
 // variable to keep track of current layer
 // Would like to pass the class name as a variable to the drawBitmap() function
-byte selectedLayer = 0; // 0 is default background
+byte selectedLayer;
 
 
-
-// Current color depth is 24bit so next let's setup color shortcuts. Makes changes a lot easier
+/* Current color depth is 24bit so next let's setup color shortcuts. Makes changes a lot easier */
 const rgb24 black = { 0,0,0 };
 const rgb24 white = { 255,255,255 };
 const rgb24 red = { 255,0,0 };
@@ -63,33 +84,44 @@ const rgb24 indigo = { 75,0,130 };
 const rgb24 violet = { 238,130,238 };
 
 
-
 // Default background layer color
 const rgb24 defaultBackgroundColor = black;
 
 // Default background layer brightness
 const int defaultBrightness = 70 * (255 / 100); //Currently 70%. Would like to change brightness via hardware.
 
-
 void setup() {
 
 	// Add the layers that were allocated above
 	displayBox.addLayer(&defaultBackgroundLayer);	// Default background
 	displayBox.addLayer(&indexedLayer);	// Indexed layer
-
+	
 	displayBox.begin();
 
 	// Set initial brightness to default
 	displayBox.setBrightness(defaultBrightness);
 
-	defaultBackgroundLayer.setBrightness(defaultBrightness);
+	defaultBackgroundLayer.setBrightness(defaultBrightness);	// Sets brightness defaultBackgroundLayer 
 
 	// Enable color correction. Works!
 	defaultBackgroundLayer.enableColorCorrection(true);
 	indexedLayer.enableColorCorrection(true);
-
-	// Draw the powerbutton background as the default for now
+	
+	// For testing, we will show the standbyMode background first for 2 seconds, then show the default mode (until INPUT is enabled)
+	currentDisplayMode = standbyMode;
+	selectedLayer = 0;
 	drawDefaultBackground();
+	delay(2000);
+
+	// TODO: Settings: "Add last mode at powerup" option when Settings menu is added
+	// Set default mode at powerup to speedMode	TODO: Add inputs to change modes.
+	currentDisplayMode = speedMode;		// Set speedMode as the default at powerup
+	selectedLayer = 0;					// Sets the default background layer at powerup
+
+	/*TODO: Don't forget to add the PIN MODE code to detect the powerbutton/interlock.
+	Need to figure out a current limiting resistor on the pin. Don't want to rely on
+	internal resistors in case there's a bug in the code.*/
+	drawDefaultBackground();		// Draw the default background
 
 }
 
@@ -105,17 +137,31 @@ void drawDefaultBackground() {
 	// Clear background layer
 	// defaultBackgroundLayer.fillScreen(black);
 
-	// Draw the blue powerbutton graphic (need to add option to choose displaybuffer)
-	drawBitmap(0, 0, 0, (const gimp64x32bitmap*)&powerbutton);
+	if (currentDisplayMode == 0) {
+		drawBitmap(0, 0, 0, (const gimp64x32bitmap*)&speedModeBackground);
+	}
+	else if (currentDisplayMode == 1) {
+		drawBitmap(0, 0, 0, (const gimp64x32bitmap*)&batteryModeBackground);
+	}
+	else if (currentDisplayMode == 2) {
+		drawBitmap(0, 0, 0, (const gimp64x32bitmap*)&powerModeBackground);
+	}
+	else{
+		// Draw the blue powerbutton graphic (need to add option to choose displaybuffer)
+		drawBitmap(0, 0, 0, (const gimp64x32bitmap*)&standbyModeBackground);
 
+	}
+
+	defaultBackgroundLayer.swapBuffers();	// Swap draw buffers above into the display buffer
 
 }
 
-// This function draws GIMP converted c bitmaps to the display buffer. Pretty awesome!
-// This function was taken from the SmartMatrix FeatureDemo.ino.
-// It reads the RGB bitmap data stored in gimp64x32bitmap and draws a pixel of the same color
-// to the given displaybuffer.
 void drawBitmap(int16_t x, int16_t y, char selectedLayer, const gimp64x32bitmap* bitmap) {
+	// This function draws GIMP converted c bitmaps to the display buffer. Pretty awesome!
+	// This function was taken from the SmartMatrix FeatureDemo.ino.
+	// It reads the RGB bitmap data stored in gimp64x32bitmap and draws a pixel of the same color
+	// to the given displaybuffer.
+
 	for (unsigned int i = 0; i < bitmap->height; i++) {
 		for (unsigned int j = 0; j < bitmap->width; j++) {
 			rgb24 pixel = { bitmap->pixel_data[(i*bitmap->width + j) * 3 + 0],
